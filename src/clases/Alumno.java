@@ -3,31 +3,27 @@ package clases;
 public class Alumno {
 	
 	
-	private static int PROX_CODIGO_ALUMNO;
 	private String nombres, apellidos, dni;
 	private int codAlumno, edad, celular, estado;
 	
-	static {
-		PROX_CODIGO_ALUMNO = 202010001;
-	}
-
-	public Alumno(String nombres, String apellidos, String dni, int edad, int celular) {
-		this.codAlumno = PROX_CODIGO_ALUMNO;
+	public Alumno(int cod, String nombres, String apellidos, String dni, int edad, int celular) {
+		this.codAlumno = cod;
 		this.nombres = nombres;
 		this.apellidos = apellidos;
 		this.dni = dni;
 		this.edad = edad;
 		this.celular = celular;
 		this.estado = 0;
-		PROX_CODIGO_ALUMNO++;
 	}
-
-	public static int getPROX_CODIGO_ALUMNO() {
-		return PROX_CODIGO_ALUMNO;
-	}
-
-	public static void setPROX_CODIGO_ALUMNO(int proxcodigo) {
-		PROX_CODIGO_ALUMNO = proxcodigo;
+	
+	public Alumno(int cod, String nombres, String apellidos, String dni, int edad, int celular, int estado) {
+		this.codAlumno = cod;
+		this.nombres = nombres;
+		this.apellidos = apellidos;
+		this.dni = dni;
+		this.edad = edad;
+		this.celular = celular;
+		this.estado = estado;
 	}
 
 	public String getNombres() {

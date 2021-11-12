@@ -1,32 +1,27 @@
 package clases;
 
+import libreria.Tiempo;
+
 public class Matricula {
 	
 
-	private static int PROX_NUM_MATRICULA;
 	private int numMatricula, codAlumno, codCurso;
 	private String fecha, hora;
-	
-	static {
-		PROX_NUM_MATRICULA = 100001;
-	}
 
-	public Matricula(int codAlumno, int codCurso) {
-		this.numMatricula = PROX_NUM_MATRICULA;
+	public Matricula(int num, int codAlumno, int codCurso) {
+		this.numMatricula = num;
 		this.codAlumno = codAlumno;
 		this.codCurso = codCurso;
-		/* Obtener hora y fecha a traves de un metodo */
-		/*this.fecha = fecha;
-		this.hora = hora; */
-		PROX_NUM_MATRICULA++;
+		this.fecha = Tiempo.fecha();
+		this.hora = Tiempo.hora();
 	}
-
-	public static int getPROX_NUM_MATRICULA() {
-		return PROX_NUM_MATRICULA;
-	}
-
-	public static void setPROX_NUM_MATRICULA(int PROX_NUM_MATRICULA) {
-		Matricula.PROX_NUM_MATRICULA = PROX_NUM_MATRICULA;
+	
+	public Matricula(int num, int codAlumno, int codCurso, String fecha, String hora) {
+		this.numMatricula = num;
+		this.codAlumno = codAlumno;
+		this.codCurso = codCurso;
+		this.fecha = fecha;
+		this.hora = hora; 
 	}
 
 	public int getNumMatricula() {

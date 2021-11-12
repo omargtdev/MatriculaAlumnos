@@ -1,29 +1,24 @@
 package clases;
 
+import libreria.Tiempo;
+
 public class Retiro {
 	
-	private static int PROX_NUM_MATRICULA;
 	private int numRetiro, numMatricula;
 	private String fecha, hora;
 	
-	static {
-		PROX_NUM_MATRICULA = 200001;
-	}
-
-	public Retiro(int numMatricula) {
-		this.numRetiro = PROX_NUM_MATRICULA;
+	public Retiro(int num, int numMatricula) {
+		this.numRetiro = num;
 		this.numMatricula = numMatricula;
-		/*this.fecha = fecha;
-		this.hora = hora;*/
-		PROX_NUM_MATRICULA++;
+		this.fecha = Tiempo.fecha();
+		this.hora = Tiempo.hora();
 	}
-
-	public static int getPROX_NUM_MATRICULA() {
-		return PROX_NUM_MATRICULA;
-	}
-
-	public static void setPROX_NUM_MATRICULA(int proxnum) {
-		PROX_NUM_MATRICULA = proxnum;
+	
+	public Retiro(int num, int numMatricula, String fecha, String hora) {
+		this.numRetiro = num;
+		this.numMatricula = numMatricula;
+		this.fecha = fecha;
+		this.hora = hora;
 	}
 
 	public int getNumRetiro() {

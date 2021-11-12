@@ -10,14 +10,20 @@ import arreglos.ArregloAlumnos;
 import arreglos.ArregloCursos;
 import arreglos.ArregloMatriculas;
 import arreglos.ArregloRetiros;
-import clases.Alumno;
-import clases.Curso;
-import clases.Matricula;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.awt.event.ActionEvent;
 
 public class MenuPrincipal extends JFrame implements ActionListener {
@@ -45,21 +51,9 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 	// Dialogs
 	private DlgMatricula dlgMatricula;
 	private DlgRetiro dlgRetiro;
-	
-	
-	// arrays
-	public static ArregloAlumnos arrAlumnos;
-	public static ArregloCursos arrCursos;
-	public static ArregloMatriculas arrMatriculas;
-	public static ArregloRetiros arrRetiros;
+	private DlgAlumno dlgAlumno;
+	private DlgCurso dlgCurso; 
 
-	// inicializador
-	static {
-		arrAlumnos = new ArregloAlumnos();
-		arrCursos = new ArregloCursos();
-		arrMatriculas = new ArregloMatriculas();
-		arrRetiros = new ArregloRetiros();
-	}
 	/**
 	 * Launch the application.
 	 */
@@ -81,19 +75,6 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 	 */
 	public MenuPrincipal() {
 		
-		/* Create student via gui*/
-		arrAlumnos.agregar(new Alumno("Omar", "Gutierrez Tafur", "74772272", 18, 998877665));
-		arrAlumnos.agregar(new Alumno("Javier", "Gutierrez Tafur", "74772272", 18, 998877665));
-		arrAlumnos.agregar(new Alumno("Juan", "Gutierrez Tafur", "74772272", 18, 998877665));
-		arrAlumnos.agregar(new Alumno("Aldair", "Gutierrez Tafur", "74772272", 18, 998877665));
-		System.out.println("Alumnos " + arrAlumnos.longitud());
-		
-		arrCursos.agregar(new Curso(1001, "MATEMATICA", 0, 3, 30));
-		arrCursos.agregar(new Curso(1002, "COMUNICACION", 0, 3, 25));
-		arrCursos.agregar(new Curso(1003, "DISEÑO WEB", 0, 4, 35));
-		arrCursos.agregar(new Curso(1004, "INTRODUCCION A JAVASCRIPT", 0, 3, 30));
-		System.out.println("Cursos " + arrCursos.longitud());
-
 		setTitle("Cibertec - Registro y Matr\u00EDcula de Alumnos");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 810, 472);
@@ -105,9 +86,11 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 		mnuBar.add(mnuMantenimiento);
 		
 		mnuItemAlumno = new JMenuItem("Alumno");
+		mnuItemAlumno.addActionListener(this);
 		mnuMantenimiento.add(mnuItemAlumno);
 		
 		mnuItemCurso = new JMenuItem("Curso");
+		mnuItemCurso.addActionListener(this);
 		mnuMantenimiento.add(mnuItemCurso);
 		
 		mnuRegistro = new JMenu("Registro");
@@ -148,6 +131,12 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == mnuItemCurso) {
+			actionPerformedMnuItemCurso(e);
+		}
+		if (e.getSource() == mnuItemAlumno) {
+			actionPerformedMnuItemAlumno(e);
+		}
 		if (e.getSource() == mnuItemRetiro) {
 			actionPerformedMnuItemRetiro(e);
 		}
@@ -155,7 +144,7 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 			actionPerformedMnuItemMatricula(e);
 		}
 	}
-
+	
 	protected void actionPerformedMnuItemMatricula(ActionEvent e) {
 		if(!DlgMatricula.exists) {
 			dlgMatricula = new DlgMatricula();
@@ -171,6 +160,24 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 			dlgRetiro.setVisible(true);
 		}else {
 			dlgRetiro.toFront();
+		}
+	}
+
+	protected void actionPerformedMnuItemAlumno(ActionEvent e) {
+		if(!DlgAlumno.exists) {
+			dlgAlumno = new DlgAlumno();
+			dlgAlumno.setVisible(true);
+		}else {
+			dlgAlumno.toFront();
+		}
+	}
+
+	protected void actionPerformedMnuItemCurso(ActionEvent e) {
+		if(!DlgCurso.exists) {
+			dlgCurso = new DlgCurso();
+			dlgCurso.setVisible(true);
+		}else {
+			dlgCurso.toFront();
 		}
 	}
 }

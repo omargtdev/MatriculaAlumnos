@@ -1,103 +1,93 @@
 package gui;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import arreglos.ArregloAlumnos;
+import arreglos.ArregloCursos;
+import arreglos.ArregloMatriculas;
 import clases.Alumno;
+import clases.Curso;
 import clases.Matricula;
+import libreria.Mensaje;
+import libreria.Tiempo;
 import libreria.Util;
 
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JComboBox;
 
 public class DlgMatricula extends JDialog implements WindowListener, ActionListener {
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	// Si existe la ventana no abrimos otra, usamos la que tenemos
 	public static boolean exists = false;
-	private JLabel lblNumMatricula;
-	private JLabel lblCodAlumno;
-	private JTextField txtNumMatricula;
-	private JButton btnAceptar;
 	private JButton btnAdicionar;
+	private JButton btnConsultar;
 	private JButton btnModificar;
 	private JButton btnEliminar;
+	private JButton btnActualizar;
 	private JScrollPane scrollPane;
 	private JTable tbMatricula;
-	private JComboBox<Object> cboCodAlumno;
-	private JComboBox<Object> cboCodCurso;
 	private DefaultTableModel model;
-
+	
+	//Titulos mensajes
+	private String TITU_AGREGAR = "Agregar matricula";
+	private String TITU_MODIFICAR = "Modificar matricula";
+	private String TITU_CONSULTAR = "Consultar matricula";
+	private String TITU_ELIMINAR = "Eliminar matricula";
+	
 	/**
 	 * Create the dialog.
 	 */
 	public DlgMatricula() {
-		
+		setTitle("Matricula");
 		addWindowListener(this);
 		
 		exists = true;
 
-		setTitle("Matr\u00EDcula");
-		setBounds(100, 100, 755, 440);
+		setBounds(100, 100, 700, 410);
 		getContentPane().setLayout(null);
 		setLocationRelativeTo(null);
 		
-		lblNumMatricula = new JLabel("N\u00FAmero de la Matr\u00EDcula");
-		lblNumMatricula.setBounds(10, 11, 114, 14);
-		getContentPane().add(lblNumMatricula);
-		
-		lblCodAlumno = new JLabel("C\u00F3digo del Alumno");
-		lblCodAlumno.setBounds(10, 36, 94, 14);
-		getContentPane().add(lblCodAlumno);
-		
-		txtNumMatricula = new JTextField();
-		txtNumMatricula.setEditable(false);
-		txtNumMatricula.setBounds(134, 8, 100, 20);
-		getContentPane().add(txtNumMatricula);
-		txtNumMatricula.setColumns(10);
-		
-		JLabel lblCodCurso = new JLabel("C\u00F3digo del Curso");
-		lblCodCurso.setBounds(10, 61, 100, 14);
-		getContentPane().add(lblCodCurso);
-		
-		btnAceptar = new JButton("Aceptar");
-		btnAceptar.addActionListener(this);
-		btnAceptar.setEnabled(false);
-		btnAceptar.setBounds(10, 90, 89, 23);
-		getContentPane().add(btnAceptar);
-		
 		btnAdicionar = new JButton("Adicionar");
 		btnAdicionar.addActionListener(this);
-		btnAdicionar.setBounds(598, 7, 131, 23);
+		btnAdicionar.setBounds(15, 11, 123, 23);
 		getContentPane().add(btnAdicionar);
+		
+		btnConsultar = new JButton("Consultar");
+		btnConsultar.addActionListener(this);
+		btnConsultar.setBounds(148, 11, 123, 23);
+		getContentPane().add(btnConsultar);
 		
 		btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(this);
-		btnModificar.setBounds(598, 36, 131, 23);
+		btnModificar.setBounds(281, 11, 123, 23);
 		getContentPane().add(btnModificar);
 		
 		btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(this);
-		btnEliminar.setBounds(598, 65, 131, 23);
+		btnEliminar.setBounds(414, 11, 123, 23);
 		getContentPane().add(btnEliminar);
 		
+		btnActualizar = new JButton("Actualizar");
+		btnActualizar.addActionListener(this);
+		btnActualizar.setBounds(547, 11, 123, 23);
+		getContentPane().add(btnActualizar);
+		
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 124, 719, 266);
+		scrollPane.setBounds(15, 45, 659, 315);
 		getContentPane().add(scrollPane);
 		
-		/* cargar matriculas */
+		tbMatricula = new JTable();
+		scrollPane.setViewportView(tbMatricula);
+		
 		tbMatricula = new JTable();
 		scrollPane.setViewportView(tbMatricula);
 		
@@ -110,228 +100,244 @@ public class DlgMatricula extends JDialog implements WindowListener, ActionListe
 
 		tbMatricula.setModel(model);
 
-		cboCodAlumno = new JComboBox<Object>();
-		cboCodAlumno.setEnabled(false);
-		cboCodAlumno.setBounds(134, 32, 100, 22);
-		getContentPane().add(cboCodAlumno);
-		
-		cboCodCurso = new JComboBox<Object>();
-		cboCodCurso.setEnabled(false);
-		cboCodCurso.setBounds(134, 57, 100, 22);
-		getContentPane().add(cboCodCurso);
-		
-		cargarCodigos();
 		mostrarMatriculas();
 	}
 	
-	
-	private void cargarCodigos() {
-		cboCodAlumno.removeAllItems();
-		cboCodCurso.removeAllItems();
-		for(int i = 0; i < MenuPrincipal.arrAlumnos.longitud(); i++) {
-			// Mostraremos los alumnos que esten solo registrados
-			if(MenuPrincipal.arrAlumnos.obtener(i).getEstado() == 0) {
-				cboCodAlumno.addItem(MenuPrincipal.arrAlumnos.obtener(i).getCodAlumno());
-			}
-		}
-		for (int i = 0; i < MenuPrincipal.arrCursos.longitud(); i++) {
-			cboCodCurso.addItem(MenuPrincipal.arrCursos.obtener(i).getCodCurso());
-		}
-	}
+	/* arreglos */
+	private ArregloAlumnos aa = new ArregloAlumnos();
+	private ArregloMatriculas am = new ArregloMatriculas();
+	private ArregloCursos ac = new ArregloCursos();
 	
 	private void mostrarMatriculas() {
 		model.setRowCount(0);
-		for(int i = 0; i < MenuPrincipal.arrMatriculas.longitud(); i++) {
-			Matricula m = MenuPrincipal.arrMatriculas.obtener(i);
+		for(int i = 0; i < am.longitud(); i++) {
+			Matricula m = am.obtener(i);
 			model.addRow(new Object[]{
 					m.getNumMatricula(), 
 					m.getCodAlumno(), 
 					m.getCodCurso(), 
-					m.getFecha(), 
-					m.getHora()
+					Tiempo.formatearFecha(m.getFecha()), 
+					Tiempo.formatearHora(m.getHora())
 				});
 		}
 	}
-	
+
 	public void windowActivated(WindowEvent e) {
 	}
-
 	public void windowClosed(WindowEvent e) {
 		if (e.getSource() == this) {
 			windowClosedThis(e);
 		}
 	}
-
-	// Colocar la ventana como "inexistente" al cerrarla
 	public void windowClosing(WindowEvent e) {
 		exists = false;
 	}
-
 	public void windowDeactivated(WindowEvent e) {
 	}
-
 	public void windowDeiconified(WindowEvent e) {
 	}
-
 	public void windowIconified(WindowEvent e) {
 	}
-
 	public void windowOpened(WindowEvent e) {
 	}
-
 	protected void windowClosedThis(WindowEvent e) {
 	}
 	
-	// metodo para libreria (lib)
-/*	private void habilitarCampos(JTextField[] campos, JButton boton) {
-		for(int i = 0; i < campos.length; i++) {
-			campos[i].setEditable(true);
-		}
-		boton.setEnabled(true);
-	}*/
-	/* util */
 	
-	private void deshabilitarCampos() {
-		cboCodAlumno.setEnabled(false);
-		cboCodCurso.setEnabled(false);
-		btnAceptar.setEnabled(false);
-		txtNumMatricula.setText("");
-	}
-
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnActualizar) {
+			actionPerformedBtnActualizar(e);
+		}
 		if (e.getSource() == btnEliminar) {
 			actionPerformedBtnEliminar(e);
 		}
 		if (e.getSource() == btnModificar) {
 			actionPerformedBtnModificar(e);
 		}
-		if (e.getSource() == btnAceptar) {
-			actionPerformedBtnAceptar(e);
+		if (e.getSource() == btnConsultar) {
+			actionPerformedBtnConsultar(e);
 		}
 		if (e.getSource() == btnAdicionar) {
 			actionPerformedBtnAdicionar(e);
 		}
 	}
-
-	// Agregar matricular
-	protected void actionPerformedBtnAdicionar(ActionEvent e) {
-		//Actualizar codigos
-		cargarCodigos();
-		deshabilitarCampos();
-		if(cboCodAlumno.getItemCount() != 0 && cboCodCurso.getItemCount() != 0) {
-			//Cambiar al estado del btnAceptar a 0 (adicionar)
-			estadoBtnAceptar = 0;
-			Util.habilitarElemento(cboCodAlumno);
-			Util.habilitarElemento(cboCodCurso);
-			Util.habilitarElemento(btnAceptar);
-			txtNumMatricula.setText(Matricula.getPROX_NUM_MATRICULA() + "");
-		}else{
-			Util.mensaje(this, "No se puede crear una matricula si no hay almenos un curso y un alumno (registrado)", 
-					"Error de Matricula",
-					"error"
-				);
+	
+	private int obtenerCodAlumno() {
+		String cod = "";
+		Alumno a = null;
+		while(a == null) {
+			try {
+				cod = Mensaje.input(this, "Coloca el codigo del alumno", TITU_AGREGAR, "000000000");
+				if(cod == null){
+					Mensaje.msg(this, "Se cancelo la operacion", TITU_AGREGAR, Mensaje.ADVERTENCIA);
+					return -1;
+				}else if(cod.trim().equals("")) {
+					Mensaje.msg(this, "Ingrese un codigo de alumno", TITU_AGREGAR, Mensaje.ERROR);
+				}else {	
+					a = aa.buscar(Integer.parseInt(cod.trim()));
+					if(a == null) {
+						Mensaje.msg(this, "Ingrese un codigo existente", TITU_AGREGAR, Mensaje.ERROR);
+					}else if(aa.buscar(Integer.parseInt(cod.trim())).getEstado() != 0) {
+						Mensaje.msg(this, "Este alumno ya esta matriculado", TITU_AGREGAR, Mensaje.ERROR);
+						a = null;
+					}
+				}
+			} catch (Exception x) {
+				Mensaje.msg(this, "Ingrese un codigo correcto", TITU_AGREGAR, Mensaje.ERROR);
+			}
+		}
+		return Integer.parseInt(cod.trim());
+	}
+	
+	private int obtenerCodCurso(String titulo) {
+		String cod = "";
+		Curso c = null;
+		while(c == null) {
+			try {
+				cod = Mensaje.input(this, "Coloca el codigo del curso", titulo, "0000");
+				if(cod == null){
+					Mensaje.msg(this, "Se cancelo la operacion", titulo, Mensaje.ADVERTENCIA);
+					return -1;
+				}else if(cod.trim().equals("")) {
+					Mensaje.msg(this, "Ingrese un codigo de curso", titulo, Mensaje.ERROR);
+				}else {	
+					c = ac.buscar(Integer.parseInt(cod.trim()));
+					if(c == null) {
+						Mensaje.msg(this, "Ingrese un codigo existente", titulo, Mensaje.ERROR);
+					}
+				}
+			} catch (Exception x) {
+				Mensaje.msg(this, "Ingrese una matricula correcta", titulo, Mensaje.ERROR);
+			}
+		}
+		return Integer.parseInt(cod.trim());
+	} 
+	
+	protected void actionPerformedBtnAdicionar(ActionEvent e){
+		actualizarArreglos();
+		int codAlumno = obtenerCodAlumno();
+		if(codAlumno != -1) {
+			int codCurso = obtenerCodCurso(TITU_AGREGAR);
+			if(codCurso != -1) {
+				String datos = Util.saltoLinea("¿Los datos son correctos?") + 
+							   Util.saltoLinea("Cod. alumno : " + codAlumno) +
+							   Util.saltoLinea("Nombre      : " + aa.buscar(codAlumno).getNombres() + " " + aa.buscar(codAlumno).getApellidos()) + 
+							   Util.saltoLinea("Cod. curso  : " + codCurso) +
+							   Util.saltoLinea("Asignatura  : " + ac.buscar(codCurso).getAsignatura());
+				int confir = Mensaje.confirm(this, datos, TITU_AGREGAR);
+				if(confir == 0) {
+					am.agregar(new Matricula(
+							am.codigoCorrelativo(), 
+							codAlumno, 
+							codCurso
+						));
+					aa.buscar(codAlumno).setEstado(1); // Matriculado
+					aa.actualizarArchivo();
+					am.actualizarArchivo();
+					mostrarMatriculas();
+					int seguir = Mensaje.confirm(this, "¿Desea agregar otra matricula?", TITU_AGREGAR);
+					if(seguir == 0) {
+						actionPerformedBtnAdicionar(e);
+					}
+				}else {
+					Mensaje.msg(this, "Se cancelo la operacion", TITU_AGREGAR, Mensaje.ADVERTENCIA);
+				}
+			}
 		}
 	}
 	
-	private int obtenerCodigo(JComboBox<Object> cbo) {
-		return (int) cbo.getSelectedItem();
+
+	private void actualizarArreglos() {
+		aa = new ArregloAlumnos();
+		ac = new ArregloCursos();
+		am = new ArregloMatriculas();
 	}
 	
-	/* Adicionar -> 0
-	 * Modificar -> 1
-	 */
-
-	private int estadoBtnAceptar = 0;
-
-	protected void actionPerformedBtnAceptar(ActionEvent e) {
-		//Adicionar
-		if(estadoBtnAceptar == 0) {
-			// Creando y agregando la nueva matricula
-			MenuPrincipal.arrMatriculas.agregar(new Matricula(
-					obtenerCodigo(cboCodAlumno),
-					obtenerCodigo(cboCodCurso)
-			));
-			//Buscar y cambiar el estado a matriculado (1)
-			Alumno a = MenuPrincipal.arrAlumnos.buscar(obtenerCodigo(cboCodAlumno));
-			if(a != null) {
-				a.setEstado(1);
-			}else {
-				Util.mensaje(this, "Ocurrio un error", "Error", "error");
-			}
-		// Modificar
+	protected void actionPerformedBtnConsultar(ActionEvent e) {
+		actualizarArreglos();
+		int num = Util.obtenerCodigo(tbMatricula, model);
+		if(num != -1) {
+			Matricula m = am.buscar(num);
+			Alumno a = aa.buscar(m.getCodAlumno());
+			Curso c = ac.buscar(m.getCodCurso());
+			Mensaje.msg(this, datosMatricula(m) + datosAlumno(a) + datosCurso(c), TITU_CONSULTAR, Mensaje.INFO);
 		}else {
-			//Buscar la matricula y actualizar el curso seleccionado , si este cambia
-			Matricula m = MenuPrincipal.arrMatriculas.buscar(Integer.parseInt(txtNumMatricula.getText()));
-			int codCurso = obtenerCodigo(cboCodCurso);
-			boolean cambio = (codCurso == m.getCodCurso()) ? false : true;
-			if(cambio) {
-				m.setCodCurso(codCurso);
-			}else {
-				Util.mensaje(this, "Debes cambiar el codigo del curso para modificar", "Alerta", "warning");
-				return;
-			}
+			Mensaje.msg(this, "Debes seleccionar UNA matricula", "Error", Mensaje.ERROR);
 		}
-		//Actualizar codigos y matriculas
-		deshabilitarCampos();
-		cargarCodigos();
-		mostrarMatriculas();
 	}
 	
+	private String datosMatricula(Matricula m) {
+		return Util.saltoLinea("DATOS DE LA MATRICULA") +
+			   Util.saltoLinea("  Numero : " + m.getNumMatricula()) +
+			   Util.saltoLinea("  Fecha  : " + Tiempo.formatearFecha(m.getFecha())) +
+			   Util.saltoLinea("  Hora   : " + Tiempo.formatearHora(m.getHora()));
+	}
 	
-	private void habilitarParaModificar(Matricula m) {
-		txtNumMatricula.setText(m.getNumMatricula() + "");
-		//Mostramos solo el codigo del alumno que vamos a modificar
-		cboCodAlumno.removeAllItems();
-		cboCodAlumno.addItem(m.getCodAlumno() + "");
-		cboCodAlumno.setEnabled(false);
-		Util.habilitarElemento(cboCodCurso);
-		Util.habilitarElemento(btnAceptar);
+	private String datosAlumno(Alumno a) {
+		return Util.saltoLinea("DATOS DEL ALUMNO") +
+			   Util.saltoLinea("  Codigo : " + a.getCodAlumno()) +
+			   Util.saltoLinea("  Nombre : " + a.getNombres()  + " " + a.getApellidos()) +
+			   Util.saltoLinea("  Estado : " + Util.nombreEstado(a.getEstado()));
+	}
+
+	private String datosCurso(Curso c) {
+		return Util.saltoLinea("DATOS DEL CURSO") +
+			   Util.saltoLinea("  Codigo : " + c.getCodCurso()) +
+			   Util.saltoLinea("  Nombre : " + c.getAsignatura()) +
+			   Util.saltoLinea("  Ciclo  : " + Util.numeroCiclo(c.getCiclo()));
 	}
 
 	protected void actionPerformedBtnModificar(ActionEvent e) {
+		actualizarArreglos();
 		int num = Util.obtenerCodigo(tbMatricula, model);
 		if(num != -1) {
-			//Cambiar al estado del btnAceptar a 1 (modificar)
-			estadoBtnAceptar = 1;
-			Matricula m = MenuPrincipal.arrMatriculas.buscar(num);
-			if(m != null) {
-				habilitarParaModificar(m);
-			}else {
-				Util.mensaje(this, "Ocurrio un error", "Error", "error");
+			String datos = "";
+			Matricula m = am.buscar(num);
+			int codCurso = obtenerCodCurso(TITU_MODIFICAR);
+			if(codCurso != -1) {
+				datos = Util.saltoLinea("¿Los datos son correctos?") + 
+						Util.saltoLinea("Cod. curso  : " + codCurso) +
+						Util.saltoLinea("Asignatura  : " + ac.buscar(codCurso).getAsignatura());
+				int confir = Mensaje.confirm(this, datos, TITU_MODIFICAR);
+				if(confir == 0) {
+					m.setCodCurso(codCurso);
+					am.actualizarArchivo();
+					mostrarMatriculas();
+				}else {
+					Mensaje.msg(this, "Se cancelo la operacion", TITU_MODIFICAR, Mensaje.ADVERTENCIA);
+				}
 			}
 		}else {
-			Util.mensaje(this, "Debes seleccionar UNA matricula", "Error", "error");
+			Mensaje.msg(this, "Debes seleccionar UNA matricula", "Error", Mensaje.ERROR);
 		}
 	}
 
 	protected void actionPerformedBtnEliminar(ActionEvent e) {
+		actualizarArreglos();
 		int num = Util.obtenerCodigo(tbMatricula, model);
 		if(num != -1) {
-			deshabilitarCampos();
-			Matricula m = MenuPrincipal.arrMatriculas.buscar(num);
-			//Preguntar por la eliminacion 
-			int confir = JOptionPane.showConfirmDialog(this, "¿Esta seguro que desea eliminar esta matricula?");
-			System.out.println(confir);
+			Matricula m = am.buscar(num);
+			Alumno a = aa.buscar(m.getCodAlumno());
+			int confir = Mensaje.confirm(this, "¿Estas seguro de cancelar esta matricula?", TITU_ELIMINAR);
 			if(confir == 0) {
-				if(evaluarEliminacion(m.getCodAlumno())) { // Verificar si la matricula no esta retirado 
-					MenuPrincipal.arrMatriculas.eliminar(m);
-					//Cambiar el codigo del alumno en registrado
-					MenuPrincipal.arrAlumnos.buscar(m.getCodAlumno()).setEstado(0);
-					cargarCodigos();
+				if(a.getEstado() == 2) {
+					Mensaje.msg(this, "No puedes cancelar una matricula retirada", TITU_ELIMINAR, Mensaje.ERROR);
 				}else {
-					Util.mensaje(this, "No puedes eliminar una matricula que esta retirada", "Error de cancelacion", "error");
+					am.eliminar(m);
+					a.setEstado(0); // Pasar el estado del alumno a registrado
+					aa.actualizarArchivo();
+					am.actualizarArchivo();
+					mostrarMatriculas();
+					Mensaje.msg(this, "La matricula se cancelo", TITU_ELIMINAR, Mensaje.INFO);
 				}
-			}
+			}		
 		}else {
-			Util.mensaje(this, "Debes seleccionar UNA matricula", "Error", "error");
+			Mensaje.msg(this, "Debes seleccionar UNA matricula", "Error", Mensaje.ERROR);
 		}
-
-	}
-	
-	private boolean evaluarEliminacion(int cod) {
-		Alumno a = MenuPrincipal.arrAlumnos.buscar(cod);
-		System.out.println(a);
-		return (a.getCodAlumno() == 2)  ? false : true;
 	}
 
+	protected void actionPerformedBtnActualizar(ActionEvent e) {
+		actualizarArreglos();
+		mostrarMatriculas();
+	}
 }
