@@ -99,6 +99,8 @@ public class DlgCurso extends JDialog implements WindowListener, ActionListener 
 
 		tbCurso.setModel(model);
 		
+		mostrarCursos();
+		
 	}
 
 	public void windowActivated(WindowEvent e) {
@@ -177,7 +179,9 @@ public class DlgCurso extends JDialog implements WindowListener, ActionListener 
 					Mensaje.msg(this, "El codigo debe ser de 4 digitos", TITU_AGREGAR, Mensaje.ERROR);
 				}else {
 					codigo = Integer.parseInt(cod.trim());
-					if(ac.buscar(codigo) != null) {
+					if(codigo == 0) {
+						Mensaje.msg(this, "Coloca un codigo correcto", TITU_AGREGAR, Mensaje.ERROR);
+					}else if(ac.buscar(codigo) != null) {
 						Mensaje.msg(this, "Ya existe un curso con este codigo", TITU_AGREGAR, Mensaje.ERROR);
 						codigo = 0;
 					}

@@ -22,6 +22,12 @@ public class Util {
 	public static String puntoComa(int i) {
 		return i + ";";
 	}
+	
+	public static String tituloTxtArea(String titulo) {
+		return saltoLinea("-------------------------------------------------------------") +
+			   saltoLinea("             " + titulo) +
+			   saltoLinea("-------------------------------------------------------------");
+	}
 
 	public static String puntoComa(String i) {
 		return i + ";";

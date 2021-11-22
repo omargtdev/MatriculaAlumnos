@@ -2,28 +2,15 @@ package gui;
 
 import java.awt.EventQueue;
 
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import arreglos.ArregloAlumnos;
-import arreglos.ArregloCursos;
-import arreglos.ArregloMatriculas;
-import arreglos.ArregloRetiros;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.awt.event.ActionEvent;
 
 public class MenuPrincipal extends JFrame implements ActionListener {
@@ -53,6 +40,8 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 	private DlgRetiro dlgRetiro;
 	private DlgAlumno dlgAlumno;
 	private DlgCurso dlgCurso; 
+	private DlgConsultaAlumnosCursos dlgConsultaAlumnosCursos;
+	private DlgConsultaMatriculasRetiros dlgConsultaMatriculasRetiros;
 
 	/**
 	 * Launch the application.
@@ -108,9 +97,11 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 		mnuBar.add(mnuConsulta);
 		
 		mnuItemAlumYCursos = new JMenuItem("Alumnos y cursos");
+		mnuItemAlumYCursos.addActionListener(this);
 		mnuConsulta.add(mnuItemAlumYCursos);
 		
 		mnuItemMatriYRetiros = new JMenuItem("Matr\u00EDculas y retiros");
+		mnuItemMatriYRetiros.addActionListener(this);
 		mnuConsulta.add(mnuItemMatriYRetiros);
 		
 		mnuReporte = new JMenu("Reporte");
@@ -131,6 +122,12 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == mnuItemMatriYRetiros) {
+			actionPerformedMnuItemMatriYRetiros(e);
+		}
+		if (e.getSource() == mnuItemAlumYCursos) {
+			actionPerformedMnuItemAlumYCursos(e);
+		}
 		if (e.getSource() == mnuItemCurso) {
 			actionPerformedMnuItemCurso(e);
 		}
@@ -180,4 +177,24 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 			dlgCurso.toFront();
 		}
 	}
+
+	protected void actionPerformedMnuItemAlumYCursos(ActionEvent e) {
+		if(!DlgConsultaAlumnosCursos.exists) {
+			dlgConsultaAlumnosCursos = new DlgConsultaAlumnosCursos();
+			dlgConsultaAlumnosCursos.setVisible(true);
+			
+		}else {
+			dlgConsultaAlumnosCursos.toFront();
+		}
+	}
+
+	protected void actionPerformedMnuItemMatriYRetiros(ActionEvent e) {
+		if(!DlgConsultaMatriculasRetiros.exists) {
+			dlgConsultaMatriculasRetiros = new DlgConsultaMatriculasRetiros();
+			dlgConsultaMatriculasRetiros.setVisible(true);
+		}else {
+			dlgConsultaMatriculasRetiros.toFront();
+		}
+	}
+
 }
