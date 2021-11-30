@@ -271,7 +271,7 @@ public class DlgRetiro extends JDialog implements WindowListener, ActionListener
 			Curso c = ac.buscar(m.getCodCurso());
 			Mensaje.msg(this, datosRetiro(r) + datosMatricula(m) + datosAlumno(a) + datosCurso(c), TITU_CONSULTAR, Mensaje.INFO);
 		}else {
-			Mensaje.msg(this, "Debes seleccionar UNA matricula", "Error", Mensaje.ERROR);
+			Mensaje.msg(this, "Debes seleccionar UN retiro", "Error", Mensaje.ERROR);
 		}
 	}
 	
@@ -342,7 +342,7 @@ public class DlgRetiro extends JDialog implements WindowListener, ActionListener
 				Mensaje.msg(this, "El retiro se cancelo", TITU_ELIMINAR, Mensaje.INFO);
 			}		
 		}else {
-			Mensaje.msg(this, "Debes seleccionar UNA matricula", "Error", Mensaje.ERROR);
+			Mensaje.msg(this, "Debes seleccionar UN retiro", "Error", Mensaje.ERROR);
 		}
 	}
 

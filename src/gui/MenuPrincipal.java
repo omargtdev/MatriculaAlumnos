@@ -42,6 +42,9 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 	private DlgCurso dlgCurso; 
 	private DlgConsultaAlumnosCursos dlgConsultaAlumnosCursos;
 	private DlgConsultaMatriculasRetiros dlgConsultaMatriculasRetiros;
+	private DlgAlumnosMatriculadosPorCurso dlgAlumnosMatriculadosPorCurso;
+	private DlgAlumnosMatriculaPendiente dlgAlumnosMatriculaPendiente;
+	private DlgAlumnosMatriculaVigente dlgAlumnosMatriculaVigente;
 
 	/**
 	 * Launch the application.
@@ -108,12 +111,15 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 		mnuBar.add(mnuReporte);
 		
 		mnuItemAlumMatriPen = new JMenuItem("Alumnos con matr\u00EDcula pendiente");
+		mnuItemAlumMatriPen.addActionListener(this);
 		mnuReporte.add(mnuItemAlumMatriPen);
 		
-		mnuItemAlumMatriVige = new JMenuItem(" Alumnos con matr\u00EDcula vigente");
+		mnuItemAlumMatriVige = new JMenuItem("Alumnos con matr\u00EDcula vigente");
+		mnuItemAlumMatriVige.addActionListener(this);
 		mnuReporte.add(mnuItemAlumMatriVige);
 		
 		mnuItemAlumMatriCurso = new JMenuItem("Alumnos matriculados por curso");
+		mnuItemAlumMatriCurso.addActionListener(this);
 		mnuReporte.add(mnuItemAlumMatriCurso);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -122,6 +128,15 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == mnuItemAlumMatriCurso) {
+			actionPerformedMnuItemAlumMatriCurso(e);
+		}
+		if (e.getSource() == mnuItemAlumMatriVige) {
+			actionPerformedMnuItemAlumMatriVige(e);
+		}
+		if (e.getSource() == mnuItemAlumMatriPen) {
+			actionPerformedMnuItemAlumMatriPen(e);
+		}
 		if (e.getSource() == mnuItemMatriYRetiros) {
 			actionPerformedMnuItemMatriYRetiros(e);
 		}
@@ -194,6 +209,33 @@ public class MenuPrincipal extends JFrame implements ActionListener {
 			dlgConsultaMatriculasRetiros.setVisible(true);
 		}else {
 			dlgConsultaMatriculasRetiros.toFront();
+		}
+	}
+
+	protected void actionPerformedMnuItemAlumMatriPen(ActionEvent e) {
+		if(!DlgAlumnosMatriculaPendiente.exists) {
+			dlgAlumnosMatriculaPendiente = new DlgAlumnosMatriculaPendiente();
+			dlgAlumnosMatriculaPendiente.setVisible(true);
+		}else {
+			dlgAlumnosMatriculaPendiente.toFront();
+		}
+	}
+
+	protected void actionPerformedMnuItemAlumMatriVige(ActionEvent e) {
+		if(!DlgAlumnosMatriculaVigente.exists) {
+			dlgAlumnosMatriculaVigente = new DlgAlumnosMatriculaVigente();
+			dlgAlumnosMatriculaVigente.setVisible(true);
+		}else {
+			dlgAlumnosMatriculaVigente.toFront();
+		}
+	}
+
+	protected void actionPerformedMnuItemAlumMatriCurso(ActionEvent e) {
+		if(!DlgAlumnosMatriculadosPorCurso.exists) {
+			dlgAlumnosMatriculadosPorCurso = new DlgAlumnosMatriculadosPorCurso();
+			dlgAlumnosMatriculadosPorCurso.setVisible(true);
+		}else {
+			dlgAlumnosMatriculadosPorCurso.toFront();
 		}
 	}
 
